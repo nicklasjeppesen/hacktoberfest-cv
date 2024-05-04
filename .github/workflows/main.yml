@@ -1,20 +1,34 @@
-name: LaTeX
-on: [push]
+name: LaTeX Release
+
+on:
+  push:
+    # Run workflow on pushes to master branch
+    branches:
+      - master
+  # Run workflow on tag creation
+  release:
+    types: [created]
+
 jobs:
   build_latex:
     runs-on: ubuntu-latest
     steps:
       - name: Set up Git repository
         uses: actions/checkout@v2
+
       - name: Compile LaTeX document
         uses: xu-cheng/latex-action@v2
         with:
           root_file: report/main.tex
           latexmk_use_xelatex: true
+
       - name: Check output
         run: ls
+
       - name: Release
+        # Ensure this step runs only for tag creation events
+        if: github.event_name == 'release' && github.event.action == 'created'
         uses: softprops/action-gh-release@v1
-        if: startsWith(github.ref, 'refs/tags/')
         with:
+          # Adjust files if the output PDF has a different name or location
           files: main.pdf
