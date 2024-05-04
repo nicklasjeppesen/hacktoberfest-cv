@@ -19,7 +19,10 @@ jobs:
         with:
           root_file: report/main.tex
           latexmk_use_xelatex: true
-
+      
+      - name: Rename PDF file
+        run: mv main.pdf group_f_it.pdf
+      
       - name: Check output
         run: ls
 
@@ -27,11 +30,11 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: group_f_it
-          path: main.pdf
+          path: group_f_it.pdf
 
       - name: Release
         if: github.event_name == 'release' && github.event.action == 'created'
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            main.pdf
+            group_f_it.pdf
