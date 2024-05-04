@@ -2,10 +2,8 @@ name: LaTeX Release
 
 on:
   push:
-    # Run workflow on pushes to master branch
     branches:
       - main
-  # Run workflow on tag creation
   release:
     types: [created]
 
@@ -25,10 +23,15 @@ jobs:
       - name: Check output
         run: ls
 
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: main-pdf
+          path: report/main.pdf
+
       - name: Release
-        # Ensure this step runs only for tag creation events
         if: github.event_name == 'release' && github.event.action == 'created'
         uses: softprops/action-gh-release@v1
         with:
-          # Adjust files if the output PDF has a different name or location
-          files: main.pdf
+          files: |
+            report/main.pdf
